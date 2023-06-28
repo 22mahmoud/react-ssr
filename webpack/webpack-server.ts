@@ -2,37 +2,37 @@ import path from "path";
 
 import type { Configuration } from "webpack";
 
+const projectRoot = path.resolve(__dirname, "../");
+
 const config: Configuration = {
-  entry: "./src/index.tsx",
+  entry: {
+    server: path.resolve(projectRoot, "src/entry-server.tsx"),
+  },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
   },
+  target: "node",
   output: {
-    filename: "main.js",
-    path: path.resolve(__dirname, "dist"),
+    path: path.resolve(projectRoot, "dist"),
+    filename: "[name].js",
+    assetModuleFilename: "[hash][ext][query]",
   },
   module: {
     rules: [
       {
         test: /\.(t|j)s(x)?$/,
-        exclude: /node_modules|css\.ts/,
+        exclude: /node_modules/,
         use: [
           {
             loader: "esbuild-loader",
             options: {
-              target: "es6",
+              target: "node19",
               jsx: "automatic",
-              tsconfigRaw: require("./tsconfig.json"),
+              tsconfigRaw: require("../tsconfig.json"),
             },
           },
         ],
       },
-
-      {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
-      },
-      ,
     ],
   },
 };
